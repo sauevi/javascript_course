@@ -17,9 +17,13 @@ const calculateTip = amount => {
 function main() {
   const bills = [124, 48, 268];
 
-  const tips = bills.map(bill => calculateTip(bill));
+  const tips = new Array();
 
-  const totalToPay = bills.map(bill => calculateTip(bill) + bill);
+  const totalToPay = bills.map(bill => {
+    let tip = calculateTip(bill);
+    tips.push(tip);
+    return tip + bill;
+  });
 
   console.log(`Tips: ${tips}`);
   console.log(`Total to pay: ${totalToPay}`);
