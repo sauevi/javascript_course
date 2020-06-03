@@ -93,7 +93,7 @@ const budgetController = (() => {
       inc: 0
     },
     budget: 0,
-    percentage: 0,
+    percentage: -1,
     calculateTotals: function (type) {
       this.totals[type] = this.allItems[type]
         .map(transaction => transaction.value)
@@ -103,7 +103,9 @@ const budgetController = (() => {
       this.budget = this.totals.inc - this.totals.exp;
     },
     calculateIncomePercentage: function () {
-      this.percentage = Math.round((this.totals.exp / this.totals.inc) * 100);
+      if (this.totals.inc > 0) {
+        this.percentage = Math.round((this.totals.exp / this.totals.inc) * 100);
+      }
     }
   };
 
@@ -206,6 +208,7 @@ const globalController = ((budgetCtrl, uiCtrl) => {
   function updateBudget(type) {
     budgetCtrl.calculateBudget(type);
     const budget = budgetCtrl.getBudget();
+    console.log(budget);
     // TODO continue this step
     // 3. Display the budget
   }
