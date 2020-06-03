@@ -28,12 +28,20 @@ const budgetController = (() => {
    * @param desc transaction's description
    * @param val transaction's value
    */
-  function createTransaction(ID, type, desc, val) {
+  function createTransaction(itemInput) {
+    const { description, value, type } = itemInput;
+    //create new ID
+    let ID;
+    if (data.allItems[type].length > 0) {
+      ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+    } else {
+      ID = 0;
+    }
     switch (type) {
       case 'inc':
-        return new Income(ID, desc, val);
+        return new Income(ID, description, value);
       case 'exp':
-        return new Expense(ID, desc, val);
+        return new Expense(ID, description, value);
     }
   }
 
@@ -110,26 +118,15 @@ const budgetController = (() => {
   };
 
   return {
-    addItemToBudget: (type, desc, val) => {
-      //create new ID
-      let ID;
-      if (data.allItems[type].length > 0) {
-        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
-      } else {
-        ID = 0;
-      }
-      // create new item base on the type
-      let newItem = createTransaction(ID, type, desc, val);
-      // push it into our data structure
+    addItemToBudget: itemInput => {
+      const { type } = itemInput;
+      let newItem = createTransaction(itemInput);
       data.allItems[type].push(newItem);
       return newItem;
     },
     calculateBudget: type => {
-      // 1. calculate total income and expenses
       data.calculateTotals(type);
-      // 2. calculate budget: income - expenses
       data.calculateBudget();
-      // 3. calculate percentage of income that was spend
       data.calculateIncomePercentage();
     },
     getBudget: () => {
@@ -217,13 +214,13 @@ const globalController = ((budgetCtrl, uiCtrl) => {
    * func to global add new items to inc and expenses
    */
   function crltAddItem() {
-    const { type, description, value } = uiCtrl.getInput();
+    const { description, value, type } = uiCtrl.getInput();
 
     if (description === '' || isNaN(value) || value <= 0) {
       return;
     }
 
-    const budgetItem = budgetCtrl.addItemToBudget(type, description, value);
+    const budgetItem = budgetCtrl.addItemToBudget({ description, value, type });
     uiCtrl.getAddListItem(budgetItem);
     uiCtrl.clearFields();
     updateBudget(type);
