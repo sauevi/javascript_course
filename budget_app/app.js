@@ -5,18 +5,79 @@ const budgetController = (() => {
   /*
    * Transaction object to set up the commun data between Expenses and Incomes objects.
    */
-  function Transaction(id, description, value) {
-    this.id = id;
-    this.description = description;
-    this.value = value;
+  class Transaction {
+    constructor(id, description, value) {
+      this.id = id;
+      this.description = description;
+      this.value = value;
+    }
+
+    /**
+     * create the formated value
+     */
+    createDisplayValue(number) {
+      this.displayValue = formatNumber(number);
+    }
   }
 
-  /**
-   * create the formated value
+  /*
+   * Expense object and it's functions.
    */
-  Transaction.prototype.createDisplayValue = function (number) {
-    this.displayValue = formatNumber(number);
-  };
+  class Expense extends Transaction {
+    constructor(id, description, value) {
+      super(id, description, value);
+      this.percentage = -1;
+    }
+
+    /**
+     * get the html component that should be placed
+     */
+    getHTML() {
+      return `<div class="item clearfix" id="exp-${this.id}"><div class="item__description">${this.description}</div><div class="right clearfix"><div class="item__value">- ${this.displayValue}</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
+    }
+
+    /**
+     * get the element name where should be set the html
+     */
+    getHtmlElementName() {
+      return '.expenses__list';
+    }
+
+    /**
+     * calculate expenses percentage
+     */
+    calculatePercentage(totalIncome) {
+      this.percentage =
+        totalIncome > 0 ? Math.round((this.value / totalIncome) * 100) : -1;
+    }
+
+    /**
+     * get expenses percentage
+     */
+    getPercentage() {
+      return this.percentage;
+    }
+  }
+
+  class Income extends Transaction {
+    constructor(id, description, value) {
+      super(id, description, value);
+    }
+
+    /**
+     * get the html component that should be placed
+     */
+    getHTML() {
+      return `<div class="item clearfix" id="inc-${this.id}"><div class="item__description">${this.description}</div><div class="right clearfix"><div class="item__value">+ ${this.displayValue}</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
+    }
+
+    /**
+     * get the element name where should be set the html
+     */
+    getHtmlElementName() {
+      return '.income__list';
+    }
+  }
 
   /**
    *
@@ -31,16 +92,6 @@ const budgetController = (() => {
       int = `${int.substr(0, int.length - 3)},${int.substr(int.length - 3, 3)}`;
     }
     return `${int}.${numbSplit[1]}`;
-  }
-
-  /**
-   * function to extend a child from a parent object
-   * @param Child object which will extend from parent.
-   * @param Parent object which will be extended.
-   */
-  function extend(Child, Parent) {
-    Child.prototype = Object.create(Parent.prototype);
-    Child.prototype.constructor = Child;
   }
 
   /**
@@ -71,65 +122,6 @@ const budgetController = (() => {
     newTransaction.createDisplayValue(value);
     return newTransaction;
   }
-
-  /*
-   * Expense object and it's functions.
-   */
-  function Expense(id, description, value) {
-    Transaction.call(this, id, description, value);
-    this.percentage = -1;
-  }
-
-  extend(Expense, Transaction);
-
-  /**
-   * get the html component that should be placed
-   */
-  Expense.prototype.getHTML = function () {
-    return `<div class="item clearfix" id="exp-${this.id}"><div class="item__description">${this.description}</div><div class="right clearfix"><div class="item__value">- ${this.displayValue}</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
-  };
-
-  /**
-   * get the element name where should be set the html
-   */
-  Expense.prototype.getHtmlElementName = function () {
-    return '.expenses__list';
-  };
-
-  /**
-   * calculate expenses percentage
-   */
-  Expense.prototype.calculatePercentage = function (totalIncome) {
-    this.percentage =
-      totalIncome > 0 ? Math.round((this.value / totalIncome) * 100) : -1;
-  };
-
-  /**
-   * get expenses percentage
-   */
-  Expense.prototype.getPercentage = function () {
-    return this.percentage;
-  };
-
-  function Income(id, description, value) {
-    Transaction.call(this, id, description, value);
-  }
-
-  extend(Income, Transaction);
-
-  /**
-   * get the html component that should be placed
-   */
-  Income.prototype.getHTML = function () {
-    return `<div class="item clearfix" id="inc-${this.id}"><div class="item__description">${this.description}</div><div class="right clearfix"><div class="item__value">+ ${this.displayValue}</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
-  };
-
-  /**
-   * get the element name where should be set the html
-   */
-  Income.prototype.getHtmlElementName = function () {
-    return '.income__list';
-  };
 
   /*
    * Data object with all the information
