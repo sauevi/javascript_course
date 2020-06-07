@@ -11,7 +11,8 @@ export default class Recipe {
     ingredients = [],
     source = '',
     socialRank = 0,
-    publisherUrl = ''
+    publisherUrl = '',
+    ingredientsParsed = []
   ) {
     this.id = id;
     this.imageUrl = imageUrl;
@@ -21,6 +22,7 @@ export default class Recipe {
     this.source = source;
     this.socialRank = socialRank;
     this.publisherUrl = publisherUrl;
+    this.ingredientsParsed = ingredientsParsed;
   }
 
   /**
@@ -31,25 +33,41 @@ export default class Recipe {
   }
 
   /**
-   * Add a new Ingredient
-   * @param {String} ingredient new ingredient to be added
+   * get all parsed ingredients
    */
-  addNewIngredient(ingredient) {
-    if (!isString(ingredient)) {
-      throw new Error(`the ingredient ${ingredient} is not valid.`);
-    }
-    return [...this.ingredients, ingredient];
+  getParsedIngredients() {
+    return [...this.ingredientsParsed];
   }
 
   /**
-   * Remove an ingredient by its index
-   * @param {Number} index of the element to be removed from the list
+   * calculate the time of cooking
    */
-  removeIngredientByIndex(index) {
-    return this.ingredients.filter((currentIngredient, indexCurrentElement) => {
-      if (indexCurrentElement !== index) {
-        return currentIngredient;
-      }
+  calculateTime() {
+    const numIng = this.ingredients.length;
+    const periods = Math.ceil(numIng / 3);
+    this.time = periods * 15;
+  }
+
+  /**
+   * calculate the amoun of servings
+   */
+  calculateServings() {
+    this.servings = 4;
+  }
+
+  /**
+   *  function to update the servings for this recipe
+   * @param {String} type it could be 'dec' to res, otherwise, will add one
+   */
+  updateServings(type) {
+    // Servings
+    const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
+
+    // Ingredients
+    this.getIngredients().forEach(ing => {
+      ing.count *= newServings / this.servings;
     });
+
+    this.servings = newServings;
   }
 }

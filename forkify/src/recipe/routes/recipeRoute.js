@@ -2,14 +2,14 @@ import axios from 'axios';
 import RecepiBuilder from '../builder/recipeBuilder';
 
 const createErrorResponse = errorResponse => {
-  const message = errorResponse.data.error;
-  if (errorResponse.status !== 400) {
-    console.log(`💥 Error 💥`, errorResponse);
-  }
-  return {
-    error: true,
-    message
-  };
+  const { response } = errorResponse;
+  const responseError = { error: true, message: '' };
+
+  responseError.message = !response
+    ? 'Opps...somthing went wrong'
+    : response.data.error;
+
+  return responseError;
 };
 
 export const getRecipesByQuery = async query => {
@@ -19,15 +19,11 @@ export const getRecipesByQuery = async query => {
     );
 
     return data.recipes.map(recepi => {
-      return new RecepiBuilder()
-        .setRecepiId(recepi.recipe_id)
-        .setImageUrl(recepi.image_url)
-        .setPublisher(recepi.publisher)
-        .setTitle(recepi.title)
-        .build();
+      const { recipe_id, image_url, publisher, title } = recepi;
+      return new RecepiBuilder(recipe_id, image_url, publisher, title).build();
     });
   } catch (error) {
-    return createErrorResponse(error.response);
+    return createErrorResponse(error);
   }
 };
 
@@ -37,17 +33,24 @@ export const getRecipeById = async id => {
       `https://forkify-api.herokuapp.com/api/get?rId=${id}`
     );
 
-    return new RecepiBuilder()
-      .setRecepiId(data.recepi.recipe_id)
-      .setImageUrl(data.recepi.image_url)
-      .setPublisher(data.recepi.publisher)
-      .setTitle(data.recepi.title)
-      .setIngredients(data.recepi.ingredients)
-      .setSource(data.recepi.source_url)
-      .setSocialRank(data.recepi.social_rank)
-      .setPublisherUrl(data.recepi.publisher_url)
+    const {
+      recipe_id,
+      image_url,
+      publisher,
+      title,
+      ingredients,
+      source_url,
+      social_rank,
+      publisher_url
+    } = data.recipe;
+
+    return new RecepiBuilder(recipe_id, image_url, publisher, title)
+      .setIngredients(ingredients)
+      .setSource(source_url)
+      .setSocialRank(social_rank)
+      .setPublisherUrl(publisher_url)
       .build();
   } catch (error) {
-    return createErrorResponse(error.response);
+    return createErrorResponse(error);
   }
 };
