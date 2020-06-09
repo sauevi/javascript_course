@@ -80,8 +80,6 @@ const controlList = () => {
 };
 
 const controlLike = () => {
-  state.likeList = new Context('like');
-
   const { id, imageUrl, publisher, title } = state.recipe;
 
   if (!state.likeList.validateLikedById(id)) {
@@ -97,7 +95,6 @@ const controlLike = () => {
     likesView.toggleLikeBtn(false);
     likesView.deleteLike(id);
   }
-
   likesView.toggleLikesMenu(state.likeList.getNumberOfLikes());
 };
 
@@ -153,6 +150,15 @@ elements.recepi.addEventListener('click', event => {
   } else if (event.target.matches('.recipe__love, .recipe__love *')) {
     controlLike();
   }
+});
+
+window.addEventListener('load', () => {
+  state.likeList = new Context('like');
+  state.likeList.readStorage();
+  likesView.toggleLikesMenu(state.likeList.getNumberOfLikes());
+  state.likeList.items.forEach(like => {
+    likesView.renderLikes(like);
+  });
 });
 
 function errorResponse(response) {
