@@ -47,7 +47,7 @@ export const renderRecipe = recipe => {
     publisher,
     title,
     source,
-    ingredientsParsed,
+    ingredients,
     time,
     servings
   } = recipe;
@@ -100,7 +100,7 @@ export const renderRecipe = recipe => {
 
     <div class="recipe__ingredients">
         <ul class="recipe__ingredient-list">
-        ${ingredientsParsed.map(createIngredient).join('')}
+        ${ingredients.map(createIngredient).join('')}
         </ul>
 
         <button class="btn-small recipe__btn--add">
@@ -135,11 +135,11 @@ export const clearRecepi = () => {
 };
 
 export const updateServingsIngredients = recipe => {
-  const { servings, ingredientsParsed } = recipe;
+  const { servings, ingredients } = recipe;
   document.querySelector('.recipe__info-data--people').textContent = servings;
   document.querySelector('.recipe__count').textContent = servings;
   const countElements = Array.from(document.querySelectorAll('.recipe__count'));
   countElements.forEach((element, index) => {
-    element.textContent = formatCount(ingredientsParsed[index].count);
+    element.textContent = formatCount(ingredients[index].count);
   });
 };

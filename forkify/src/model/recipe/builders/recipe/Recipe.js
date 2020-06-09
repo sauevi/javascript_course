@@ -9,7 +9,7 @@ export default class Recipe {
     source = '',
     socialRank = 0,
     publisherUrl = '',
-    ingredientsParsed = []
+    ingredients = []
   ) {
     this.id = id;
     this.imageUrl = imageUrl;
@@ -18,14 +18,14 @@ export default class Recipe {
     this.source = source;
     this.socialRank = socialRank;
     this.publisherUrl = publisherUrl;
-    this.ingredientsParsed = ingredientsParsed;
+    this.ingredients = ingredients;
   }
 
   /**
    * calculate the time of cooking
    */
   calculateTime() {
-    const numIng = this.ingredientsParsed.length;
+    const numIng = this.ingredients.length;
     const periods = Math.ceil(numIng / 3);
     this.time = periods * 15;
   }
@@ -46,7 +46,7 @@ export default class Recipe {
     const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
 
     // Ingredients
-    this.ingredientsParsed.forEach(ing => {
+    this.ingredients.forEach(ing => {
       ing.count *= newServings / this.servings;
     });
 

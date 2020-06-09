@@ -72,7 +72,7 @@ const controlList = () => {
 
   const { recipe, shoppingListItems } = state;
   //add to shoppingList
-  recipe.ingredientsParsed.forEach(item => {
+  recipe.ingredients.forEach(item => {
     shoppingListItems.addNewItem(item);
     listView.renderItem(item);
   });
