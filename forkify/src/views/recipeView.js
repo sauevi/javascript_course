@@ -5,21 +5,22 @@ const formatCount = count => {
   if (!count) {
     return '?';
   }
+  const newCount = Math.round(count * 10000) / 10000;
 
-  const [integer, decimal] = count
+  const [integer, decimal] = newCount
     .toString()
     .split('.')
     .map(number => parseInt(number, 10));
 
   if (!decimal) {
-    return count;
+    return newCount;
   }
 
   if (integer === 0) {
-    const fraction = new Fraction(count);
+    const fraction = new Fraction(newCount);
     return `${fraction.numerator}/${fraction.denominator}`;
   } else {
-    const fraction = new Fraction(count - integer);
+    const fraction = new Fraction(newCount - integer);
     return `${integer} ${fraction.numerator}/${fraction.denominator}`;
   }
 };

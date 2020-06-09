@@ -20,8 +20,6 @@ import LikeBuilder from '../model/builders/list/likes/likeBuilder';
  */
 const state = {};
 
-window.state = state;
-
 const controlSearch = async () => {
   const query = searchView.getInput();
   if (!query) {
