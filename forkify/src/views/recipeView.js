@@ -25,7 +25,7 @@ const formatCount = count => {
 };
 
 const createIngredient = currentIngredient => {
-  const { count, unit, ingredient } = currentIngredient;
+  const { count, unit, description } = currentIngredient;
 
   return `
 <li class="recipe__item">
@@ -35,7 +35,7 @@ const createIngredient = currentIngredient => {
     <div class="recipe__count">${formatCount(count)}</div>
     <div class="recipe__ingredient">
         <span class="recipe__unit">${unit}</span>
-        ${ingredient}
+        ${description}
     </div>
 </li>
 `;

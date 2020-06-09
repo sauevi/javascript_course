@@ -1,4 +1,5 @@
 import Recipe from './Recipe';
+import Ingredient from '../../ingredient';
 
 export default class RecepiBuilder {
   constructor(id, imageUrl, publisher, title) {
@@ -80,25 +81,21 @@ export default class RecepiBuilder {
             count = eval(arrIng.slice(0, unitIndex).join('+'));
           }
 
-          objIng = {
+          objIng = new Ingredient(
             count,
-            unit: arrIng[unitIndex],
-            ingredient: arrIng.slice(unitIndex + 1).join(' ')
-          };
+            arrIng[unitIndex],
+            arrIng.slice(unitIndex + 1).join(' ')
+          );
         } else if (parseInt(arrIng[0], 10)) {
           // There is NO unit, but 1st element is number
-          objIng = {
-            count: parseInt(arrIng[0], 10),
-            unit: '',
-            ingredient: arrIng.slice(1).join(' ')
-          };
+          objIng = new Ingredient(
+            parseInt(arrIng[0], 10),
+            '',
+            arrIng.slice(1).join(' ')
+          );
         } else if (unitIndex === -1) {
           // There is NO unit and NO number in 1st position
-          objIng = {
-            count: 1,
-            unit: '',
-            ingredient
-          };
+          objIng = new Ingredient(1, '', ingredient);
         }
 
         return objIng;
