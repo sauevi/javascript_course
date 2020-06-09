@@ -253,6 +253,7 @@ body {
   align-items: center;
   height: 100%;
   transition: all 0.3s;
+  visibility: hidden;
 }
 .likes__field:hover {
   background-color: #f2efee;
