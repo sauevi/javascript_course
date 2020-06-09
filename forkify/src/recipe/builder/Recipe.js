@@ -26,20 +26,6 @@ export default class Recipe {
   }
 
   /**
-   * get all ingredients
-   */
-  getIngredients() {
-    return [...this.ingredients];
-  }
-
-  /**
-   * get all parsed ingredients
-   */
-  getParsedIngredients() {
-    return [...this.ingredientsParsed];
-  }
-
-  /**
    * calculate the time of cooking
    */
   calculateTime() {
@@ -64,7 +50,7 @@ export default class Recipe {
     const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
 
     // Ingredients
-    this.getIngredients().forEach(ing => {
+    this.ingredientsParsed.forEach(ing => {
       ing.count *= newServings / this.servings;
     });
 

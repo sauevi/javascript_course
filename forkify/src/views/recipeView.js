@@ -1,44 +1,87 @@
+import { elements } from '../views/base';
+import { Fraction } from 'fractional';
+
+const formatCount = count => {
+  if (!count) {
+    return '?';
+  }
+
+  const [integer, decimal] = count
+    .toString()
+    .split('.')
+    .map(number => parseInt(number, 10));
+
+  if (!decimal) {
+    return count;
+  }
+
+  if (integer === 0) {
+    const fraction = new Fraction(count);
+    return `${fraction.numerator}/${fraction.denominator}`;
+  } else {
+    const fraction = new Fraction(count - integer);
+    return `${integer} ${fraction.numerator}/${fraction.denominator}`;
+  }
+};
+
+const createIngredient = currentIngredient => {
+  const { count, unit, ingredient } = currentIngredient;
+
+  return `
+<li class="recipe__item">
+    <svg class="recipe__icon">
+        <use href="img/icons.svg#icon-check"></use>
+    </svg>
+    <div class="recipe__count">${formatCount(count)}</div>
+    <div class="recipe__ingredient">
+        <span class="recipe__unit">${unit}</span>
+        ${ingredient}
+    </div>
+</li>
+`;
+};
+
 export const renderRecipe = recipe => {
   const {
-    id,
     imageUrl,
     publisher,
     title,
     source,
-    socialRank,
-    publisherUrl,
-    ingredientsParsed
+    ingredientsParsed,
+    time,
+    servings
   } = recipe;
 
   const markup = `
         <figure class="recipe__fig">
-        <img src="img/test-1.jpg" alt="Tomato" class="recipe__img">
+        <img src="${imageUrl}" alt="${title}" class="recipe__img">
         <h1 class="recipe__title">
             <span>${title}</span>
         </h1>
     </figure>
+
     <div class="recipe__details">
         <div class="recipe__info">
             <svg class="recipe__info-icon">
                 <use href="img/icons.svg#icon-stopwatch"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">45</span>
+            <span class="recipe__info-data recipe__info-data--minutes">${time}</span>
             <span class="recipe__info-text"> minutes</span>
         </div>
         <div class="recipe__info">
             <svg class="recipe__info-icon">
                 <use href="img/icons.svg#icon-man"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--people">4</span>
+            <span class="recipe__info-data recipe__info-data--people">${servings}</span>
             <span class="recipe__info-text"> servings</span>
 
             <div class="recipe__info-buttons">
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-decrease">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-minus"></use>
                     </svg>
                 </button>
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-increase">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-plus"></use>
                     </svg>
@@ -57,72 +100,7 @@ export const renderRecipe = recipe => {
 
     <div class="recipe__ingredients">
         <ul class="recipe__ingredient-list">
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1000</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit">g</span>
-                    pasta
-                </div>
-            </li>
-
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1/2</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit">cup</span>
-                    ricotta cheese
-                </div>
-            </li>
-
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit"></span>
-                    can of tomatoes, whole or crushed
-                </div>
-            </li>
-
-
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit"></span>
-                    can tuna packed in olive oil
-                </div>
-            </li>
-
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1/2</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit">cup</span>
-                    grated parmesan cheese
-                </div>
-            </li>
-
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1/4</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit">cup</span>
-                    fresh basil, chopped or torn
-                </div>
-            </li>
+        ${ingredientsParsed.map(createIngredient).join('')}
         </ul>
 
         <button class="btn-small recipe__btn">
@@ -137,9 +115,9 @@ export const renderRecipe = recipe => {
         <h2 class="heading-2">How to cook it</h2>
         <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
-            <span class="recipe__by">The Pioneer Woman</span>. Please check out directions at their website.
+            <span class="recipe__by">${publisher}</span>. Please check out directions at their website.
         </p>
-        <a class="btn-small recipe__btn" href="http://thepioneerwoman.com/cooking/pasta-with-tomato-cream-sauce/" target="_blank">
+        <a class="btn-small recipe__btn" href="${source}" target="_blank">
             <span>Directions</span>
             <svg class="search__icon">
                 <use href="img/icons.svg#icon-triangle-right"></use>
@@ -148,4 +126,20 @@ export const renderRecipe = recipe => {
         </a>
     </div>
     `;
+
+  elements.recepi.insertAdjacentHTML('afterbegin', markup);
+};
+
+export const clearRecepi = () => {
+  elements.recepi.innerHTML = '';
+};
+
+export const updateServingsIngredients = recipe => {
+  const { servings, ingredientsParsed } = recipe;
+  document.querySelector('.recipe__info-data--people').textContent = servings;
+  document.querySelector('.recipe__count').textContent = servings;
+  const countElements = Array.from(document.querySelectorAll('.recipe__count'));
+  countElements.forEach((element, index) => {
+    element.textContent = formatCount(ingredientsParsed[index].count);
+  });
 };

@@ -47,11 +47,19 @@ const controlRecipe = async () => {
   if (errorResponse(response)) {
     return;
   }
-
+  //prepare UI
+  recipeView.clearRecepi();
+  renderLoader(elements.recepi);
+  if (state.recepies) {
+    searchView.highlightSelector(id);
+  }
+  // prepare elements
   state.recipe = response;
   state.recipe.calculateTime();
   state.recipe.calculateServings();
   // render
+  clearLoader();
+  recipeView.renderRecipe(state.recipe);
 };
 
 // events
@@ -76,6 +84,20 @@ searchResPages.addEventListener('click', event => {
 ['hashchange', 'load'].forEach(event =>
   window.addEventListener(event, controlRecipe)
 );
+
+// btn-increase, btn-decrease
+elements.recepi.addEventListener('click', event => {
+  const { recipe } = state;
+  if (event.target.matches('.btn-decrese, .btn-decrease *')) {
+    if (recipe.servings > 1) {
+      recipe.updateServings('dec');
+      recipeView.updateServingsIngredients(recipe);
+    }
+  } else if (event.target.matches('.btn-increase, .btn-increase *')) {
+    recipe.updateServings('inc');
+    recipeView.updateServingsIngredients(recipe);
+  }
+});
 
 function errorResponse(response) {
   if (response.error) {
