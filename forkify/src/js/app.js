@@ -1,4 +1,7 @@
-import { getRecipesByQuery, getRecipeById } from '../recipe/routes/recipeRoute';
+import {
+  getRecipesByQuery,
+  getRecipeById
+} from '../model/recipe/routes/recipeRoute';
 import * as searchView from '../views/searchView';
 import * as recipeView from '../views/recipeView';
 import {
