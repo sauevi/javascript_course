@@ -4,12 +4,14 @@ import {
 } from '../model/recipe/routes/recipeRoute';
 import * as searchView from '../views/searchView';
 import * as recipeView from '../views/recipeView';
+import * as listView from '../views/listView';
 import {
   elements,
   elementStrings,
   renderLoader,
   clearLoader
 } from '../views/base';
+import ShoppingBuilder from '../model/recipe/builders/shopping/shoppingBuilder';
 /**
  * Global state of the app
  * search object
@@ -65,9 +67,33 @@ const controlRecipe = async () => {
   recipeView.renderRecipe(state.recipe);
 };
 
+const controlList = () => {
+  state.shoppingListItems = new ShoppingBuilder().build();
+
+  const { recipe, shoppingListItems } = state;
+  //add to shoppingList
+  recipe.ingredientsParsed.forEach(item => {
+    shoppingListItems.addNewItem(item);
+    listView.renderItem(item);
+  });
+};
+
 // events
-const { searchForm, searchResPages } = elements;
+const { searchForm, searchResPages, shoppingList } = elements;
 const { btnPages } = elementStrings;
+
+//handle delete and update list item events
+shoppingList.addEventListener('click', event => {
+  const { shoppingListItems } = state;
+  const id = event.target.closest('.shopping__item').dataset.itemid;
+  if (event.target.matches('.shopping__delete, .shopping__delete *')) {
+    shoppingListItems.deleteItem(id);
+    listView.deleteItem(id);
+  } else if (event.target.matches('.shopping__count-value')) {
+    const countValue = parseFloat(event.target.value, 10);
+    shoppingListItems.updatedCountValue(id, countValue);
+  }
+});
 
 searchForm.addEventListener('submit', event => {
   event.preventDefault();
@@ -99,6 +125,8 @@ elements.recepi.addEventListener('click', event => {
   } else if (event.target.matches('.btn-increase, .btn-increase *')) {
     recipe.updateServings('inc');
     recipeView.updateServingsIngredients(recipe);
+  } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+    controlList();
   }
 });
 

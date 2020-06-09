@@ -1,5 +1,5 @@
 import axios from 'axios';
-import RecepiBuilder from '../builder/recipeBuilder';
+import RecepiBuilder from '../builders/recipe/recipeBuilder';
 
 const createErrorResponse = errorResponse => {
   const { response } = errorResponse;

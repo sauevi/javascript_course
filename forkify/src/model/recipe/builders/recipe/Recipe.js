@@ -1,10 +1,11 @@
+import IngredientBuilder from '../ingredient/ingredientBuilder';
+
 export default class Recipe {
   constructor(
     id,
     imageUrl,
     publisher,
     title,
-    ingredients = [],
     source = '',
     socialRank = 0,
     publisherUrl = '',
@@ -14,7 +15,6 @@ export default class Recipe {
     this.imageUrl = imageUrl;
     this.publisher = publisher;
     this.title = title;
-    this.ingredients = ingredients;
     this.source = source;
     this.socialRank = socialRank;
     this.publisherUrl = publisherUrl;
@@ -25,7 +25,7 @@ export default class Recipe {
    * calculate the time of cooking
    */
   calculateTime() {
-    const numIng = this.ingredients.length;
+    const numIng = this.ingredientsParsed.length;
     const periods = Math.ceil(numIng / 3);
     this.time = periods * 15;
   }
